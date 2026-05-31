@@ -1,22 +1,73 @@
-Nutrition and Diet Planner Project Description
-Project Overview
-The Nutrition and Diet Planner is a web-based application designed to assist users in tracking their dietary intake and managing nutritional goals. Built using the Flask framework, the application allows users to log meals utilizing a predefined food database or custom entries. Users can set personal dietary goals (calories, protein, fats, carbs) and receive personalized nutritional insights to support healthy eating habits.
+# 🌐 Vahini Ananthoju — Personal Portfolio
 
-Key Features:
-Meal Logging: Easily log meals from a comprehensive food database or input custom options.
-Goal Setting: Set and update individual dietary goals to personalize the tracking experience.
-Nutritional Recommendations: Receive tailored suggestions based on user input and preferences.
-Hackathon Participation
-This project was developed during the Tic Tech Toe 2024 Hackathon, where teams competed to create innovative solutions to real-world problems. Our project stood out due to its focus on promoting healthy eating and empowering users with data-driven insights about their nutritional choices.
+A personal portfolio website hosted as a static site on **AWS S3**, accessible globally with zero server provisioning.
 
-Team Information
-We are Trio of Trouble, a motivated team dedicated to building impactful solutions. 
+🔗 **Live Site:** [vahini-portfolio-2026.s3-website.ap-south-1.amazonaws.com](http://vahini-portfolio-2026.s3-website.ap-south-1.amazonaws.com)
 
-The team members are:
-Priyanshi Limbachiya - https://github.com/priyanshi2693
-Himadri Raval - https://github.com/HIMADRIRAVAL
+---
 
+## 📌 Project Overview
 
-Conclusion
-The Nutrition and Diet Planner represents our commitment to addressing dietary challenges faced by individuals today. We aim to encourage healthier eating habits and foster a proactive approach to nutrition through technology.
+This project is part of **Project 1: The Global Launch** — a cloud internship initiative focused on hosting static websites using cloud storage services without managing any backend infrastructure.
 
+**Scenario:** As a freelance developer, the goal was to build and deploy a personal portfolio website that loads instantly anywhere in the world — without paying for expensive servers.
+
+---
+
+## ☁️ Hosting Architecture
+
+| Detail | Value |
+|---|---|
+| Cloud Provider | AWS |
+| Service | Amazon S3 (Simple Storage Service) |
+| Region | ap-south-1 (Mumbai) |
+| Hosting Type | Static Website Hosting |
+| Access | Public via Bucket Policy |
+
+---
+
+## 🚀 Deployment Steps
+
+1. **Created an S3 Bucket** — Named `vahini-portfolio-2026` in the `ap-south-1` region
+2. **Enabled Static Website Hosting** — Set `index.html` as the entry point
+3. **Uploaded Portfolio Files** — HTML resume/portfolio files uploaded to the bucket
+4. **Configured Bucket Policy** — Set public read access to make the site accessible over the internet
+5. **Accessed the Live URL** — The site is now live and shareable globally
+
+---
+
+## 📁 Project Structure
+
+```
+vahini-portfolio-2026/
+├── index.html        # Main portfolio page
+└── assets/           # Images, fonts, and other static assets
+```
+
+---
+
+## 🎯 Outcome
+
+- ✅ Live, shareable URL accessible over the internet
+- ✅ No server provisioning required
+- ✅ Instant global load performance via AWS infrastructure
+- ✅ Cost-effective static hosting
+
+---
+
+## 🛠️ Tools & Technologies
+
+- **AWS S3** — Static website hosting
+- **HTML** — Portfolio markup
+- **Amazon Web Services Console** — Bucket configuration and deployment
+
+---
+
+## 👩‍💻 Author
+
+**Vahini Ananthoju**
+GitHub: [@Vahini Ananthoju](https://github.com)
+
+---
+
+> *This project is part of a cloud internship program. Project 1 is the essential starting point — earn your badge by completing and verifying this deployment!* 🏅
