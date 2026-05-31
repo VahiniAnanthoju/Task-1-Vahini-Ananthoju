@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ananthoju Vahini — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0f;
+      --surface: #0f0f18;
+      --card: #14141f;
+      --orange: #FF9900;
+      --blue: #4FC3F7;
+      --green: #4ade80;
+      --purple: #c084fc;
+      --text: #ffffff;
+      --muted: #8a8aaa;
+      --border-o: rgba(255,153,0,0.15);
+      --border-b: rgba(79,195,247,0.15);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    /* CUSTOM CURSOR */
+    .cursor {
+      position: fixed; width: 12px; height: 12px;
+      background: var(--orange); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed; width: 38px; height: 38px;
+      border: 1.5px solid rgba(255,153,0,0.5);
+      border-radius: 50%; pointer-events: none;
+      z-index: 9998; transform: translate(-50%, -50%);
+      transition: all 0.12s ease;
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* NOISE OVERLAY */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9997;
+    }
+
+    /* PROGRESS BAR */
+    #progress {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--blue));
+      z-index: 9996; width: 0%; transition: width 0.1s;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.4rem 5rem;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-o);
+      transition: padding 0.3s;
+    }
+    nav.scrolled { padding: 1rem 5rem; }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 700;
+      background: linear-gradient(90deg, var(--orange), var(--blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; cursor: pointer;
+    }
+    nav ul { list-style: none; display: flex; gap: 2.5rem; }
+    nav a {
+      text-decoration: none; color: var(--muted);
+      font-size: 0.82rem; letter-spacing: 0.18em;
+      text-transform: uppercase; transition: color 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px; background: var(--orange); transition: width 0.3s;
+    }
+    nav a:hover { color: var(--orange); }
+    nav a:hover::after { width: 100%; }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 0 5rem; position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 60% at 85% 40%, rgba(255,153,0,0.08) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 50% at 15% 70%, rgba(79,195,247,0.07) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,153,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,153,0,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--orange); }
+    .hero-eyebrow span { font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 9vw, 8rem);
+      font-weight: 700; line-height: 0.95; letter-spacing: -0.02em;
+      margin-bottom: 0.2rem;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+    h1 em { font-style: italic; color: var(--orange); }
+    .hero-name-2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 9vw, 8rem); font-weight: 900;
+      line-height: 0.95;
+      background: linear-gradient(90deg, var(--blue), #a5d8ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+    .hero-info { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 3rem; animation: fadeUp 0.8s 0.2s ease both; }
+    .hero-info p { font-size: 0.95rem; color: var(--muted); }
+    .hero-info strong { color: var(--text); font-weight: 700; }
+    .intern-badge {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: rgba(255,153,0,0.08); border: 1px solid var(--border-o);
+      padding: 0.5rem 1.2rem; border-radius: 2px;
+      font-size: 0.84rem; color: var(--orange); letter-spacing: 0.1em; width: fit-content;
+    }
+    .dot { width: 7px; height: 7px; background: var(--orange); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+    .hero-btns { display: flex; gap: 1rem; animation: fadeUp 0.8s 0.3s ease both; flex-wrap: wrap; }
+    .btn {
+      text-decoration: none; font-family: 'Space Mono', monospace;
+      font-size: 0.84rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.9rem 2.2rem; border-radius: 2px; transition: all 0.25s;
+      cursor: pointer; border: none; display: inline-block;
+    }
+    .btn-primary { background: var(--orange); color: #000; font-weight: 700; }
+    .btn-primary:hover { background: #ffb733; box-shadow: 0 0 40px rgba(255,153,0,0.4); transform: translateY(-3px); }
+    .btn-ghost { border: 1px solid var(--border-b); color: var(--blue); background: transparent; }
+    .btn-ghost:hover { border-color: var(--blue); background: rgba(79,195,247,0.08); transform: translateY(-3px); }
+
+    /* FLOATING BADGES */
+    .hero-float {
+      position: absolute; right: 5rem; top: 50%;
+      transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 1.2rem;
+      animation: fadeUp 1s 0.5s ease both;
+    }
+    .fbadge {
+      background: var(--card); border: 1px solid var(--border-o);
+      padding: 1rem 1.5rem; border-radius: 3px;
+      font-size: 0.8rem; color: var(--muted);
+      display: flex; align-items: center; gap: 0.8rem;
+      transition: all 0.3s;
+    }
+    .fbadge:hover { border-color: var(--orange); transform: translateX(-6px); }
+    .fbadge .fi { font-size: 1.3rem; }
+    .fbadge strong { display: block; color: var(--text); font-size: 0.9rem; margin-bottom: 0.1rem; }
+
+    /* SECTIONS */
+    section { padding: 7rem 5rem; position: relative; z-index: 1; }
+    .sec-label {
+      font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 0.6rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .sec-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--orange); opacity: 0.4; }
+    .sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700;
+      margin-bottom: 3.5rem; line-height: 1.1;
+    }
+    .sec-title em { font-style: italic; color: var(--blue); }
+
+    /* ABOUT */
+    #about { background: var(--surface); }
+    .about-wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 6rem; align-items: start; }
+    .about-text p { color: var(--muted); line-height: 2; font-size: 0.98rem; margin-bottom: 1.4rem; }
+    .hl-o { color: var(--orange); font-weight: 700; }
+    .hl-b { color: var(--blue); font-weight: 700; }
+    .hl-w { color: var(--text); font-weight: 700; }
+    .about-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .acard {
+      background: var(--card); border: 1px solid var(--border-o);
+      padding: 1.6rem; border-radius: 3px; transition: all 0.3s;
+    }
+    .acard:nth-child(even) { border-color: var(--border-b); }
+    .acard:hover { border-color: var(--orange); transform: translateY(-4px); }
+    .acard:nth-child(even):hover { border-color: var(--blue); }
+    .acard-val { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--orange); line-height: 1; margin-bottom: 0.4rem; }
+    .acard:nth-child(even) .acard-val { color: var(--blue); }
+    .acard-lbl { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    /* JOURNEY */
+    #journey { background: var(--bg); }
+    .timeline { max-width: 720px; }
+    .titem {
+      display: grid; grid-template-columns: 140px 1fr;
+      gap: 2rem; margin-bottom: 2.5rem; padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border-o);
+    }
+    .titem:last-child { border-bottom: none; }
+    .tdate { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); padding-top: 0.2rem; }
+    .ttitle { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .tsub { font-size: 0.9rem; color: var(--muted); line-height: 1.8; }
+    .tsub strong { color: var(--blue); }
+
+    /* SKILLS */
+    #skills { background: var(--surface); }
+    .skills-wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+    .scard {
+      background: var(--card); border: 1px solid var(--border-o);
+      padding: 1.8rem; border-radius: 3px; transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .scard:nth-child(even) { border-color: var(--border-b); }
+    .scard::after {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+      background: var(--orange); transform: scaleY(0); transition: transform 0.3s; transform-origin: bottom;
+    }
+    .scard:nth-child(even)::after { background: var(--blue); }
+    .scard:hover::after { transform: scaleY(1); }
+    .scard:hover { transform: translateX(5px); }
+    .sicon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+    .sname { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .sdesc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* PROJECTS */
+    #projects { background: var(--bg); }
+    .pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+
+    .pcard {
+      background: var(--card); border: 1px solid var(--border-o);
+      border-radius: 3px; transition: all 0.35s; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .pcard:hover { border-color: var(--orange); transform: translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,153,0,0.08); }
+    .pcard.blue-card { border-color: var(--border-b); }
+    .pcard.blue-card:hover { border-color: var(--blue); box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(79,195,247,0.08); }
+    .pcard.green-card { border-color: rgba(74,222,128,0.15); }
+    .pcard.green-card:hover { border-color: var(--green); box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(74,222,128,0.08); }
+    .pcard.purple-card { border-color: rgba(192,132,252,0.15); }
+    .pcard.purple-card:hover { border-color: var(--purple); box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(192,132,252,0.08); }
+
+    /* Project visual header */
+    .pvisual {
+      height: 160px; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pvisual-s3 {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1400 50%, #0a0a0f 100%);
+    }
+    .pvisual-ec2 {
+      background: linear-gradient(135deg, #0a0a0f 0%, #001a2e 50%, #0a0a0f 100%);
+    }
+    .pvisual-rds {
+      background: linear-gradient(135deg, #0a0a0f 0%, #001a10 50%, #0a0a0f 100%);
+    }
+    .pvisual-lambda {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a0028 50%, #0a0a0f 100%);
+    }
+    .pvisual-diet {
+      background: linear-gradient(135deg, #0a0a0f 0%, #001020 50%, #0a0a0f 100%);
+    }
+
+    /* SVG inside project visuals */
+    .pvisual svg { width: 100%; height: 100%; position: absolute; inset: 0; }
+
+    .pvisual-icon {
+      position: relative; z-index: 2;
+      font-size: 3rem; filter: drop-shadow(0 0 20px currentColor);
+    }
+
+    .pbody { padding: 2rem; flex: 1; display: flex; flex-direction: column; }
+    .ptag {
+      display: inline-block; font-size: 0.76rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--orange); border: 1px solid var(--border-o);
+      padding: 0.25rem 0.7rem; border-radius: 2px; margin-bottom: 1rem;
+    }
+    .blue-card .ptag { color: var(--blue); border-color: var(--border-b); }
+    .green-card .ptag { color: var(--green); border-color: rgba(74,222,128,0.2); }
+    .purple-card .ptag { color: var(--purple); border-color: rgba(192,132,252,0.2); }
+    .ptitle { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.7rem; }
+    .pdesc { font-size: 0.9rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.2rem; flex: 1; }
+    .psteps {
+      background: rgba(255,153,0,0.04); border: 1px solid var(--border-o);
+      border-radius: 2px; padding: 1rem; margin-bottom: 1.2rem;
+      font-size: 0.84rem; color: var(--muted); line-height: 1.9;
+    }
+    .blue-card .psteps { background: rgba(79,195,247,0.04); border-color: var(--border-b); }
+    .green-card .psteps { background: rgba(74,222,128,0.04); border-color: rgba(74,222,128,0.15); }
+    .purple-card .psteps { background: rgba(192,132,252,0.04); border-color: rgba(192,132,252,0.15); }
+    .psteps-title { font-size: 0.76rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); margin-bottom: 0.5rem; }
+    .blue-card .psteps-title { color: var(--blue); }
+    .green-card .psteps-title { color: var(--green); }
+    .purple-card .psteps-title { color: var(--purple); }
+    .pstep { display: flex; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.3rem; }
+    .pstep-num { color: var(--orange); font-size: 0.78rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .blue-card .pstep-num { color: var(--blue); }
+    .green-card .pstep-num { color: var(--green); }
+    .purple-card .pstep-num { color: var(--purple); }
+    .pstatus {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .status-done { color: var(--green); }
+    .status-wip { color: var(--orange); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .status-done .status-dot { background: var(--green); animation: pulse 2s infinite; }
+    .status-wip .status-dot { background: var(--orange); animation: pulse 2s infinite; }
+    .ptechs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; }
+    .tbadge { font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 2px; }
+    .tbadge-o { background: rgba(255,153,0,0.08); color: var(--orange); border: 1px solid rgba(255,153,0,0.2); }
+    .tbadge-b { background: rgba(79,195,247,0.08); color: var(--blue); border: 1px solid rgba(79,195,247,0.2); }
+    .tbadge-g { background: rgba(74,222,128,0.08); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+    .tbadge-p { background: rgba(192,132,252,0.08); color: var(--purple); border: 1px solid rgba(192,132,252,0.2); }
+
+    /* CONTACT */
+    #contact { background: var(--surface); text-align: center; }
+    .contact-wrap { max-width: 540px; margin: 0 auto; }
+    .contact-wrap p { color: var(--muted); font-size: 0.96rem; line-height: 1.9; margin-bottom: 2.5rem; }
+    .clinks { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .clink {
+      text-decoration: none; font-size: 0.84rem; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.9rem 1.8rem; border-radius: 2px;
+      transition: all 0.25s; display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .clink-o { color: var(--orange); border: 1px solid var(--border-o); }
+    .clink-o:hover { background: rgba(255,153,0,0.1); transform: translateY(-3px); border-color: var(--orange); }
+    .clink-b { color: var(--blue); border: 1px solid var(--border-b); }
+    .clink-b:hover { background: rgba(79,195,247,0.1); transform: translateY(-3px); border-color: var(--blue); }
+    .clink-p { color: var(--purple); border: 1px solid rgba(192,132,252,0.2); }
+    .clink-p:hover { background: rgba(192,132,252,0.1); transform: translateY(-3px); border-color: var(--purple); }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border-o);
+      text-align: center; padding: 2rem;
+      font-size: 0.65rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--orange), var(--blue), transparent); opacity: 0.2; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* SCROLL TO TOP */
+    #scrollTop {
+      position: fixed; bottom: 2rem; right: 2rem;
+      width: 44px; height: 44px; background: var(--orange);
+      color: #000; border: none; border-radius: 2px; cursor: pointer;
+      font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(20px); transition: all 0.3s;
+      z-index: 900; font-family: 'Space Mono', monospace; font-weight: 700;
+    }
+    #scrollTop.show { opacity: 1; transform: translateY(0); }
+    #scrollTop:hover { background: #ffb733; transform: translateY(-3px); }
+
+    @media (max-width: 900px) {
+      .hero-float { display: none; }
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1rem; font-size: 0.6rem; }
+      #hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .about-wrap { grid-template-columns: 1fr; gap: 3rem; }
+      .titem { grid-template-columns: 1fr; gap: 0.5rem; }
+      .pgrid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div id="progress"></div>
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">Vahini.</div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span>Cloud Computing Intern · DecodeLabs</span></div>
+    <h1><em>Ananthoju</em></h1>
+    <div class="hero-name-2">Vahini</div>
+    <div class="hero-info">
+      <div class="intern-badge"><div class="dot"></div>Currently Interning @ DecodeLabs</div>
+      <p>2nd Year B.Tech CSE · <strong>Sree Chaitanya College of Engineering</strong></p>
+    </div>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-primary">View My Work</a>
+      <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+    </div>
+  </div>
+  <div class="hero-float">
+    <div class="fbadge"><span class="fi">☁️</span><div><strong>AWS Cloud</strong>S3 · EC2 · RDS · Lambda</div></div>
+    <div class="fbadge"><span class="fi">💻</span><div><strong>2nd Year CSE</strong>Sree Chaitanya</div></div>
+    <div class="fbadge"><span class="fi">🚀</span><div><strong>4 Projects</strong>DecodeLabs Internship</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="reveal">
+    <p class="sec-label">01 — about me</p>
+    <h2 class="sec-title">Who <em>I Am</em></h2>
+  </div>
+  <div class="about-wrap">
+    <div class="about-text reveal">
+      <p>Hi! I'm <span class="hl-o">Ananthoju Vahini</span> — a passionate developer and cloud enthusiast currently pursuing B.Tech in Computer Science Engineering at <span class="hl-w">Sree Chaitanya College of Engineering</span>.</p>
+      <p>I'm currently interning at <span class="hl-o">DecodeLabs</span> as a <span class="hl-w">Cloud Computing Intern</span>, gaining hands-on experience with AWS services including S3, EC2, RDS, and Lambda — all through real-world deployment projects.</p>
+      <p>I love building things that live on the internet — from clean web pages to cloud-hosted applications. Every project teaches me something new and pushes me further.</p>
+    </div>
+    <div class="about-cards reveal">
+      <div class="acard"><div class="acard-val">2nd</div><div class="acard-lbl">Year B.Tech</div></div>
+      <div class="acard"><div class="acard-val">4+</div><div class="acard-lbl">AWS Services</div></div>
+      <div class="acard"><div class="acard-val">AWS</div><div class="acard-lbl">Cloud Platform</div></div>
+      <div class="acard"><div class="acard-val">∞</div><div class="acard-lbl">Curiosity</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- JOURNEY -->
+<section id="journey">
+  <div class="reveal">
+    <p class="sec-label">02 — my journey</p>
+    <h2 class="sec-title">How I Got <em>Here</em></h2>
+  </div>
+  <div class="timeline">
+    <div class="titem reveal">
+      <div class="tdate">2023 — Now</div>
+      <div>
+        <div class="ttitle">B.Tech — Computer Science Engineering</div>
+        <div class="tsub"><strong>Sree Chaitanya College of Engineering</strong> · 2nd Year<br/>Building strong foundations in programming, data structures, algorithms and software development.</div>
+      </div>
+    </div>
+    <div class="titem reveal">
+      <div class="tdate">2025</div>
+      <div>
+        <div class="ttitle">Built First Web Project — Diet Planner</div>
+        <div class="tsub">Designed and built a diet planning web app using HTML, CSS and JavaScript to master frontend fundamentals.</div>
+      </div>
+    </div>
+    <div class="titem reveal">
+      <div class="tdate">2025 — Now</div>
+      <div>
+        <div class="ttitle">Cloud Computing Intern · DecodeLabs</div>
+        <div class="tsub">Working hands-on with AWS services. Completing a <strong>4-project series</strong> covering S3 hosting, EC2 servers, RDS databases, and Lambda serverless functions.</div>
+      </div>
+    </div>
+    <div class="titem reveal">
+      <div class="tdate">2026 · Now</div>
+      <div>
+        <div class="ttitle">Portfolio Live on AWS S3 🚀</div>
+        <div class="tsub">Deployed this very portfolio as a globally accessible static website using <strong>AWS S3</strong> — no servers, instant loading, accessible anywhere in the world.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="reveal">
+    <p class="sec-label">03 — skills</p>
+    <h2 class="sec-title">What I <em>Work With</em></h2>
+  </div>
+  <div class="skills-wrap">
+    <div class="scard reveal"><div class="sicon">🐍</div><div class="sname">Python</div><div class="sdesc">Scripting, automation, data handling and backend logic.</div></div>
+    <div class="scard reveal"><div class="sicon">💻</div><div class="sname">C Programming</div><div class="sdesc">Core fundamentals, memory management and problem solving.</div></div>
+    <div class="scard reveal"><div class="sicon">☁️</div><div class="sname">AWS Cloud</div><div class="sdesc">S3, EC2, RDS, Lambda — end-to-end cloud infrastructure.</div></div>
+    <div class="scard reveal"><div class="sicon">🌐</div><div class="sname">HTML</div><div class="sdesc">Semantic markup and clean page architecture.</div></div>
+    <div class="scard reveal"><div class="sicon">🎨</div><div class="sname">CSS</div><div class="sdesc">Responsive layouts, animations and pixel-perfect designs.</div></div>
+    <div class="scard reveal"><div class="sicon">⚡</div><div class="sname">Serverless</div><div class="sdesc">AWS Lambda — code that runs on-demand, costs zero when idle.</div></div>
+    <div class="scard reveal"><div class="sicon">🗄️</div><div class="sname">Databases</div><div class="sdesc">AWS RDS, MySQL, DynamoDB — relational and NoSQL storage.</div></div>
+    <div class="scard reveal"><div class="sicon">🖥️</div><div class="sname">Linux / SSH</div><div class="sdesc">EC2 server management via terminal and command line.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="reveal">
+    <p class="sec-label">04 — projects</p>
+    <h2 class="sec-title">Things I've <em>Built</em></h2>
+  </div>
+  <div class="pgrid">
+
+    <!-- PROJECT 1: S3 Portfolio -->
+    <div class="pcard reveal">
+      <div class="pvisual pvisual-s3">
+        <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="g1" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#FF9900" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#FF9900" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="160" fill="url(#g1)"/>
+          <!-- Grid lines -->
+          <line x1="0" y1="40" x2="400" y2="40" stroke="#FF9900" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="0" y1="80" x2="400" y2="80" stroke="#FF9900" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="0" y1="120" x2="400" y2="120" stroke="#FF9900" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="80" y1="0" x2="80" y2="160" stroke="#FF9900" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="160" y1="0" x2="160" y2="160" stroke="#FF9900" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="240" y1="0" x2="240" y2="160" stroke="#FF9900" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="320" y1="0" x2="320" y2="160" stroke="#FF9900" stroke-opacity="0.06" stroke-width="1"/>
+          <!-- S3 bucket illustration -->
+          <ellipse cx="200" cy="68" rx="50" ry="12" fill="none" stroke="#FF9900" stroke-opacity="0.5" stroke-width="1.5"/>
+          <line x1="150" y1="68" x2="150" y2="100" stroke="#FF9900" stroke-opacity="0.5" stroke-width="1.5"/>
+          <line x1="250" y1="68" x2="250" y2="100" stroke="#FF9900" stroke-opacity="0.5" stroke-width="1.5"/>
+          <ellipse cx="200" cy="100" rx="50" ry="12" fill="rgba(255,153,0,0.08)" stroke="#FF9900" stroke-opacity="0.5" stroke-width="1.5"/>
+          <!-- Globe dots -->
+          <circle cx="310" cy="55" r="3" fill="#FF9900" opacity="0.6"/>
+          <circle cx="340" cy="80" r="2" fill="#FF9900" opacity="0.4"/>
+          <circle cx="90" cy="90" r="2.5" fill="#FF9900" opacity="0.5"/>
+          <circle cx="70" cy="50" r="2" fill="#FF9900" opacity="0.3"/>
+          <!-- Connection lines -->
+          <line x1="200" y1="84" x2="310" y2="55" stroke="#FF9900" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="200" y1="84" x2="340" y2="80" stroke="#FF9900" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="200" y1="84" x2="90" y2="90" stroke="#FF9900" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="200" y1="84" x2="70" y2="50" stroke="#FF9900" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4,4"/>
+          <!-- Label -->
+          <text x="200" y="135" font-family="monospace" font-size="9" fill="#FF9900" opacity="0.5" text-anchor="middle" letter-spacing="3">AWS S3 · STATIC HOSTING</text>
+        </svg>
+        <div class="pvisual-icon">🌍</div>
+      </div>
+      <div class="pbody">
+        <div class="ptag">Project 1 · Cloud · DecodeLabs</div>
+        <div class="ptitle">The Global Launch</div>
+        <div class="pstatus status-done"><div class="status-dot"></div>Completed</div>
+        <div class="pdesc">Hosting a static portfolio website globally using AWS S3 — no servers, no cost, accessible anywhere in the world. Configured bucket policies and enabled static website hosting.</div>
+        <div class="ptechs">
+          <span class="tbadge tbadge-o">AWS S3</span>
+          <span class="tbadge tbadge-o">Static Hosting</span>
+          <span class="tbadge tbadge-o">HTML/CSS</span>
+          <span class="tbadge tbadge-o">Bucket Policy</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 2: EC2 Server -->
+    <div class="pcard blue-card reveal">
+      <div class="pvisual pvisual-ec2">
+        <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="g2" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#4FC3F7" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#4FC3F7" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="160" fill="url(#g2)"/>
+          <!-- Server rack illustration -->
+          <rect x="155" y="30" width="90" height="100" rx="2" fill="none" stroke="#4FC3F7" stroke-opacity="0.4" stroke-width="1.5"/>
+          <rect x="160" y="38" width="80" height="14" rx="1" fill="rgba(79,195,247,0.08)" stroke="#4FC3F7" stroke-opacity="0.3" stroke-width="1"/>
+          <rect x="160" y="56" width="80" height="14" rx="1" fill="rgba(79,195,247,0.08)" stroke="#4FC3F7" stroke-opacity="0.3" stroke-width="1"/>
+          <rect x="160" y="74" width="80" height="14" rx="1" fill="rgba(79,195,247,0.08)" stroke="#4FC3F7" stroke-opacity="0.3" stroke-width="1"/>
+          <rect x="160" y="92" width="80" height="14" rx="1" fill="rgba(79,195,247,0.08)" stroke="#4FC3F7" stroke-opacity="0.3" stroke-width="1"/>
+          <!-- LED dots -->
+          <circle cx="170" cy="45" r="3" fill="#4ade80" opacity="0.8"/>
+          <circle cx="170" cy="63" r="3" fill="#4ade80" opacity="0.6"/>
+          <circle cx="170" cy="81" r="3" fill="#FF9900" opacity="0.8"/>
+          <circle cx="170" cy="99" r="3" fill="#4ade80" opacity="0.7"/>
+          <!-- SSH terminal lines -->
+          <text x="50" y="60" font-family="monospace" font-size="8" fill="#4FC3F7" opacity="0.5">$ ssh -i key.pem</text>
+          <text x="50" y="74" font-family="monospace" font-size="8" fill="#4FC3F7" opacity="0.4">ubuntu@ec2-.....</text>
+          <text x="50" y="88" font-family="monospace" font-size="8" fill="#4ade80" opacity="0.5">Connected ✓</text>
+          <text x="285" y="60" font-family="monospace" font-size="8" fill="#4FC3F7" opacity="0.4">Apache</text>
+          <text x="285" y="74" font-family="monospace" font-size="8" fill="#4FC3F7" opacity="0.4">Running</text>
+          <text x="285" y="88" font-family="monospace" font-size="8" fill="#4ade80" opacity="0.5">Port 80 ✓</text>
+          <text x="200" y="145" font-family="monospace" font-size="9" fill="#4FC3F7" opacity="0.4" text-anchor="middle" letter-spacing="3">AWS EC2 · UBUNTU</text>
+        </svg>
+        <div class="pvisual-icon">🖥️</div>
+      </div>
+      <div class="pbody">
+        <div class="ptag">Project 2 · Cloud · DecodeLabs</div>
+        <div class="ptitle">The Server Commander</div>
+        <div class="pstatus status-done"><div class="status-dot"></div>Completed</div>
+        <div class="pdesc">Acting as a SysAdmin — provisioning a virtual server on AWS EC2, connecting via SSH, installing Apache/Nginx web server, and hosting a custom "Welcome to DecodeLabs" webpage.</div>
+        <div class="ptechs">
+          <span class="tbadge tbadge-b">AWS EC2</span>
+          <span class="tbadge tbadge-b">Ubuntu Linux</span>
+          <span class="tbadge tbadge-b">SSH</span>
+          <span class="tbadge tbadge-b">Apache/Nginx</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 3: RDS Database -->
+    <div class="pcard green-card reveal">
+      <div class="pvisual pvisual-rds">
+        <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="g3" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#4ade80" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="160" fill="url(#g3)"/>
+          <!-- Database cylinders -->
+          <ellipse cx="200" cy="42" rx="45" ry="10" fill="none" stroke="#4ade80" stroke-opacity="0.5" stroke-width="1.5"/>
+          <line x1="155" y1="42" x2="155" y2="82" stroke="#4ade80" stroke-opacity="0.5" stroke-width="1.5"/>
+          <line x1="245" y1="42" x2="245" y2="82" stroke="#4ade80" stroke-opacity="0.5" stroke-width="1.5"/>
+          <ellipse cx="200" cy="82" rx="45" ry="10" fill="rgba(74,222,128,0.06)" stroke="#4ade80" stroke-opacity="0.5" stroke-width="1.5"/>
+          <!-- Inner lines on db -->
+          <line x1="160" y1="54" x2="240" y2="54" stroke="#4ade80" stroke-opacity="0.15" stroke-width="1"/>
+          <line x1="160" y1="66" x2="240" y2="66" stroke="#4ade80" stroke-opacity="0.15" stroke-width="1"/>
+          <!-- Table visualization -->
+          <rect x="40" y="105" width="140" height="40" rx="1" fill="rgba(74,222,128,0.05)" stroke="#4ade80" stroke-opacity="0.3" stroke-width="1"/>
+          <line x1="40" y1="115" x2="180" y2="115" stroke="#4ade80" stroke-opacity="0.3" stroke-width="1"/>
+          <line x1="80" y1="105" x2="80" y2="145" stroke="#4ade80" stroke-opacity="0.2" stroke-width="1"/>
+          <line x1="130" y1="105" x2="130" y2="145" stroke="#4ade80" stroke-opacity="0.2" stroke-width="1"/>
+          <text x="55" y="113" font-family="monospace" font-size="7" fill="#4ade80" opacity="0.6">Name</text>
+          <text x="95" y="113" font-family="monospace" font-size="7" fill="#4ade80" opacity="0.6">Role</text>
+          <text x="140" y="113" font-family="monospace" font-size="7" fill="#4ade80" opacity="0.6">Email</text>
+          <text x="44" y="125" font-family="monospace" font-size="6" fill="#4ade80" opacity="0.4">Vahini</text>
+          <text x="84" y="125" font-family="monospace" font-size="6" fill="#4ade80" opacity="0.4">Intern</text>
+          <text x="134" y="125" font-family="monospace" font-size="6" fill="#4ade80" opacity="0.4">v@dl.com</text>
+          <!-- SQL query -->
+          <text x="230" y="112" font-family="monospace" font-size="7" fill="#4ade80" opacity="0.5">SELECT * FROM</text>
+          <text x="230" y="124" font-family="monospace" font-size="7" fill="#4ade80" opacity="0.5">Interns;</text>
+          <text x="200" y="152" font-family="monospace" font-size="9" fill="#4ade80" opacity="0.4" text-anchor="middle" letter-spacing="3">AWS RDS · MYSQL</text>
+        </svg>
+        <div class="pvisual-icon">🗄️</div>
+      </div>
+      <div class="pbody">
+        <div class="ptag">Project 3 · Cloud · DecodeLabs</div>
+        <div class="ptitle">The Data Warehouse</div>
+        <div class="pstatus status-done"><div class="status-dot"></div>Completed</div>
+        <div class="pdesc">Setting up a managed cloud database system for an e-commerce company. Provisioning AWS RDS, creating an Interns table with Name, Role, Email columns, and inserting test records.</div>
+        <div class="ptechs">
+          <span class="tbadge tbadge-g">AWS RDS</span>
+          <span class="tbadge tbadge-g">DynamoDB</span>
+          <span class="tbadge tbadge-g">MySQL</span>
+          <span class="tbadge tbadge-g">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 4: Lambda -->
+    <div class="pcard purple-card reveal">
+      <div class="pvisual pvisual-lambda">
+        <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="g4" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#c084fc" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="160" fill="url(#g4)"/>
+          <!-- Lambda function symbol -->
+          <text x="185" y="95" font-family="serif" font-size="60" fill="#c084fc" opacity="0.15" font-weight="bold">λ</text>
+          <!-- Code block -->
+          <rect x="50" y="30" width="140" height="95" rx="2" fill="rgba(192,132,252,0.05)" stroke="#c084fc" stroke-opacity="0.3" stroke-width="1"/>
+          <text x="58" y="48" font-family="monospace" font-size="7.5" fill="#c084fc" opacity="0.7">def lambda_handler(</text>
+          <text x="58" y="60" font-family="monospace" font-size="7.5" fill="#c084fc" opacity="0.7">  event, context):</text>
+          <text x="58" y="72" font-family="monospace" font-size="7.5" fill="#4ade80" opacity="0.7">  a = event['num1']</text>
+          <text x="58" y="84" font-family="monospace" font-size="7.5" fill="#4ade80" opacity="0.7">  b = event['num2']</text>
+          <text x="58" y="96" font-family="monospace" font-size="7.5" fill="#4FC3F7" opacity="0.8">  return a + b</text>
+          <!-- Trigger arrow -->
+          <path d="M 195 78 L 235 78" stroke="#c084fc" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#arr)"/>
+          <!-- Result -->
+          <rect x="238" y="60" width="100" height="36" rx="2" fill="rgba(192,132,252,0.08)" stroke="#c084fc" stroke-opacity="0.3" stroke-width="1"/>
+          <text x="260" y="75" font-family="monospace" font-size="9" fill="#c084fc" opacity="0.8">Result: 42</text>
+          <text x="248" y="88" font-family="monospace" font-size="7" fill="#c084fc" opacity="0.5">0ms · $0.00</text>
+          <!-- Idle label -->
+          <text x="280" y="120" font-family="monospace" font-size="7" fill="#c084fc" opacity="0.4">idle → cost: $0</text>
+          <text x="200" y="148" font-family="monospace" font-size="9" fill="#c084fc" opacity="0.4" text-anchor="middle" letter-spacing="3">AWS LAMBDA · PYTHON</text>
+        </svg>
+        <div class="pvisual-icon">⚡</div>
+      </div>
+      <div class="pbody">
+        <div class="ptag">Project 4 · Cloud · DecodeLabs</div>
+        <div class="ptitle">The Serverless Logic</div>
+        <div class="pstatus status-done"><div class="status-dot"></div>Completed</div>
+        <div class="pdesc">Building a Cost Calculator API without any servers. A Lambda function takes two numbers, returns their sum — executes in milliseconds and costs absolutely zero when idle.</div>
+        <div class="ptechs">
+          <span class="tbadge tbadge-p">AWS Lambda</span>
+          <span class="tbadge tbadge-p">Python</span>
+          <span class="tbadge tbadge-p">Serverless</span>
+          <span class="tbadge tbadge-p">API</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diet Planner -->
+    <div class="pcard reveal">
+      <div class="pvisual pvisual-diet">
+        <svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="g5" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#4FC3F7" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#4FC3F7" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="160" fill="url(#g5)"/>
+          <!-- Browser window mockup -->
+          <rect x="60" y="22" width="280" height="115" rx="3" fill="rgba(79,195,247,0.05)" stroke="#4FC3F7" stroke-opacity="0.3" stroke-width="1.5"/>
+          <rect x="60" y="22" width="280" height="22" rx="3" fill="rgba(79,195,247,0.1)" stroke="none"/>
+          <circle cx="76" cy="33" r="4" fill="#ff5f57" opacity="0.7"/>
+          <circle cx="92" cy="33" r="4" fill="#ffbd2e" opacity="0.7"/>
+          <circle cx="108" cy="33" r="4" fill="#28c840" opacity="0.7"/>
+          <text x="175" y="37" font-family="monospace" font-size="7" fill="#4FC3F7" opacity="0.5" text-anchor="middle">Diet Planner</text>
+          <!-- Content -->
+          <rect x="72" y="52" width="120" height="8" rx="1" fill="#4FC3F7" opacity="0.12"/>
+          <rect x="72" y="64" width="80" height="6" rx="1" fill="#4FC3F7" opacity="0.08"/>
+          <rect x="210" y="50" width="116" height="75" rx="2" fill="rgba(79,195,247,0.07)" stroke="#4FC3F7" stroke-opacity="0.2" stroke-width="1"/>
+          <text x="218" y="65" font-family="monospace" font-size="7" fill="#4FC3F7" opacity="0.6">Calories: 1850</text>
+          <text x="218" y="78" font-family="monospace" font-size="7" fill="#4ade80" opacity="0.6">Protein:  82g</text>
+          <text x="218" y="91" font-family="monospace" font-size="7" fill="#FF9900" opacity="0.6">Carbs:   210g</text>
+          <text x="218" y="104" font-family="monospace" font-size="7" fill="#c084fc" opacity="0.6">Fat:      55g</text>
+          <!-- Progress bars -->
+          <rect x="72" y="82" width="120" height="5" rx="2" fill="rgba(79,195,247,0.1)"/>
+          <rect x="72" y="82" width="86" height="5" rx="2" fill="#4FC3F7" opacity="0.4"/>
+          <rect x="72" y="94" width="120" height="5" rx="2" fill="rgba(79,195,247,0.1)"/>
+          <rect x="72" y="94" width="100" height="5" rx="2" fill="#4ade80" opacity="0.4"/>
+          <text x="200" y="150" font-family="monospace" font-size="9" fill="#4FC3F7" opacity="0.4" text-anchor="middle" letter-spacing="3">HTML · CSS · JS</text>
+        </svg>
+        <div class="pvisual-icon">🥗</div>
+      </div>
+      <div class="pbody">
+        <div class="ptag">Web App · Personal</div>
+        <div class="ptitle">Diet Planner</div>
+        <div class="pstatus status-done"><div class="status-dot"></div>Completed</div>
+        <div class="pdesc">A personal diet planning web app that helps users track meals, set nutrition goals, and plan their weekly diet. Built to master HTML, CSS and JavaScript fundamentals.</div>
+        <div class="ptechs">
+          <span class="tbadge tbadge-b">HTML</span>
+          <span class="tbadge tbadge-b">CSS</span>
+          <span class="tbadge tbadge-b">JavaScript</span>
+          <span class="tbadge tbadge-b">Responsive Design</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrap">
+    <div class="reveal">
+      <p class="sec-label">05 — contact</p>
+      <h2 class="sec-title">Let's <em>Connect</em></h2>
+    </div>
+    <p class="reveal">I'm a cloud computing intern at DecodeLabs, actively building skills and open to connecting with developers, mentors and fellow learners. Feel free to reach out!</p>
+    <div class="clinks reveal">
+      <a href="mailto:vahini@example.com" class="clink clink-o">✉ Email Me</a>
+      <a href="https://linkedin.com/in/vahini" target="_blank" class="clink clink-b">in LinkedIn</a>
+      <a href="https://github.com/vahini" target="_blank" class="clink clink-p">⌥ GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+  function animRing() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(animRing); }
+  animRing();
+  document.querySelectorAll('a,button,.btn,.pcard,.scard,.acard,.fbadge').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='20px'; cursor.style.height='20px'; ring.style.width='50px'; ring.style.height='50px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='38px'; ring.style.height='38px'; });
+  });
+
+  // Scroll progress
+  const prog = document.getElementById('progress');
+  const navbar = document.getElementById('navbar');
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    const p = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    prog.style.width = p + '%';
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+    scrollBtn.classList.toggle('show', window.scrollY > 400);
+  });
+
+  // Reveal on scroll
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
